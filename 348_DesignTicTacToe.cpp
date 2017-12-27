@@ -4,13 +4,13 @@
 */
 
 
-#include<algorithm>
-
 class TicTacToe {
 public:
     /** Initialize your data structure here. */
     TicTacToe(int n) {
-        matrix = std::vector<std::vector<int>>(n, std::vector<int>(n,0));
+        matrixSize = n;
+        rowSum = std::vector<int>(n,0);
+        columnSum = std::vector<int>(n,0);
     }
     
     /** Player {player} makes a move at ({row}, {col}).
@@ -22,63 +22,61 @@ public:
                 1: Player 1 wins.
                 2: Player 2 wins. */
     int move(int row, int col, int player) {
-        matrix[row][col] = player;
-        if(matchFoundInRow(row))
+        if(player==2)
+            player = -1;
+        
+        updateRowColumnDiagonalSum(row,col, player);
+        
+        int result = matchFoundUsingSum(row,col, player);
+        if(result == -1)
+            result = 2;
+        
+        return result;
+    }
+    
+    
+    void updateRowColumnDiagonalSum(int row, int col, int player) 
+    {
+        rowSum.at(row) += player;
+        columnSum.at(col) += player;
+        
+        if(row==col)
+            leftToRightDiagonalSum += player;
+        
+        if(row+col == matrixSize - 1)
+            rightToLeftDiagonalSum += player;
+        
+        return;
+    }
+    
+    
+    
+    int matchFoundUsingSum(int row, int col,int player)
+    {
+        //check row
+        if(rowSum.at(row) == (player * matrixSize))
             return player;
         
-        if(matchFoundInColumn(col))
+        if(columnSum.at(col) == (player * matrixSize))
             return player;
         
-        if(matchFoundInDiagonal())
+        if(leftToRightDiagonalSum == (player * matrixSize))
+            return player;
+        
+        if(rightToLeftDiagonalSum == (player * matrixSize))
             return player;
         
         return 0;
     }
     
     
-    bool matchFoundInRow(int row)
-    {
-        return matchFoundInLine(matrix[row]);
-    }
-    
-    bool matchFoundInColumn(int col)
-    {
-        vector<int> column(matrix.size(),0);
-        for(int row=0;row<matrix.size();row++)
-            column.at(row) = matrix[row][col];
-        
-        return matchFoundInLine(column);
-    }
-    
-    bool matchFoundInDiagonal()
-    {
-        vector<int> leftToRight(matrix.size(),0);
-        vector<int> rightToLeft(matrix.size(),0);
-        
-        for(int level=0;level < matrix.size(); level++)
-        {
-            int offset = matrix.size()-1;
-            leftToRight.at(level) = matrix[level][level];
-            rightToLeft.at(level) = matrix[level][offset-level];
-        }
-        
-        return (matchFoundInLine(leftToRight) || matchFoundInLine(rightToLeft));
-    }
-    
-    bool matchFoundInLine(vector<int> line)
-    {
-        
-        bool lineFull = !(std::any_of(line.begin() , line.end() , [](int number){return number==0;}));
-        
-        bool isAll1 = std::all_of(line.begin() , line.end() , [](int number){return number==1;});
-        bool isAll2 = std::all_of(line.begin() , line.end() , [](int number){return number==2;});
-        
-        return (lineFull && (isAll1 || isAll2));
-    }
-    
     
 private:
-    std::vector<std::vector<int>> matrix;
+    int matrixSize;
+    std::vector<int> rowSum;
+    std::vector<int> columnSum;
+    int leftToRightDiagonalSum = 0;
+    int rightToLeftDiagonalSum = 0;
 };
 
 /**
