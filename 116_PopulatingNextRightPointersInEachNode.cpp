@@ -13,8 +13,10 @@
  */
 class Solution {
 public:
-    void connect(TreeLinkNode *root) {
-        
+    
+    //LevelOrderTraversal Uses Extra O(n) space
+    void connectUsingLevelOrderTraversal(TreeLinkNode *root)
+    {
         using NodeLevelPair = std::pair<TreeLinkNode*, int>;
         using NodeLevelQueue = std::queue<NodeLevelPair>;
         
@@ -48,6 +50,30 @@ public:
                     NodeLevelPairChain[index].first->next = NodeLevelPairChain[index+1].first;
                 }
             }
-        }
+        }        
     }
+    
+    //connectUsingConstantSpace Uses Extra O(1) space
+    void connectUsingConstantSpace(TreeLinkNode *root) {        
+        if(root!=nullptr)
+        {
+            if(root->left != nullptr && root->right != nullptr)
+                root->left->next = root->right;
+
+            if(root->next!=nullptr && root->right!=nullptr)
+               root->right->next = root->next->left;
+            
+            connectUsingConstantSpace(root->left);
+            connectUsingConstantSpace(root->right);    
+        }        
+    }
+    
+    
+    void connect(TreeLinkNode *root) {
+        connectUsingConstantSpace(root);
+    }
+    
+    
 };
+
+
