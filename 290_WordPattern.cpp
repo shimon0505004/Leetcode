@@ -1,6 +1,7 @@
 /*
-	https://leetcode.com/problems/word-pattern/description/
 	shimon0505004
+	290. Word Pattern
+	https://leetcode.com/problems/word-pattern/
 */
 
 class Solution {

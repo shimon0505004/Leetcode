@@ -1,6 +1,7 @@
 /*
-	https://leetcode.com/submissions/detail/126283619/
 	shimon0505004
+	283. Move Zeroes
+	https://leetcode.com/problems/move-zeroes/
 */
 
 class Solution {
