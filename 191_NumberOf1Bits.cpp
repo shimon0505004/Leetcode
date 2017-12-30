@@ -1,6 +1,7 @@
 /*
-	https://leetcode.com/submissions/detail/125621644/
 	shimon0505004
+	191. Number of 1 Bits
+	https://leetcode.com/problems/number-of-1-bits/
 */
 
 class Solution {
