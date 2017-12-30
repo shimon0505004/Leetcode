@@ -85,13 +85,7 @@ public:
     }
     
     
-    ListNode* mergeKLists_UsingPriorityQueue(vector<ListNode*>& lists) 
-	{
-		/*
-			O(nlogn) time complexity for total n number of node;
-			O(n) 	space complexity for total n number of node;
-		*/
-		
+    ListNode* mergeKLists_UsingPriorityQueue(vector<ListNode*>& lists) {
         PriorityQueue queue;
         for(ListNode* list: lists)
         {
@@ -121,7 +115,70 @@ public:
     }
     
     
+    ListNode* mergeKListsNLogK(vector<ListNode*>& lists) 
+    {   
+        ListNode* head = nullptr;
+        if(lists.size() == 1)
+        {
+            ListNode* nextList = lists.at(0);
+            lists.erase(lists.begin());    
+            head = nextList;
+        }
+        else if(lists.size() > 1)
+        {
+            int mid = (0 + (lists.size()-1))/2;
+            vector<ListNode*>::iterator midIterator = lists.begin()+mid+1;
+            vector<ListNode*> list1(lists.begin(),midIterator);
+            vector<ListNode*> list2(midIterator,lists.end());
+            
+            ListNode* left = mergeKListsLogK(list1);
+            ListNode* right = mergeKListsLogK(list2);
+            
+            ListNode* leftCurrent = left;
+            ListNode* rightCurrent = right;
+            head = new ListNode(0);
+            ListNode* current = head;
+            
+            while(leftCurrent != nullptr && rightCurrent != nullptr )
+            {
+                ListNode* next = nullptr;
+                if(leftCurrent->val < rightCurrent->val)
+                {
+                    next = leftCurrent;
+                    if(leftCurrent != nullptr)
+                    {
+                        leftCurrent = leftCurrent->next;
+                        next->next = nullptr;                        
+                    }
+                }
+                else
+                {
+                    next = rightCurrent;
+                    if(rightCurrent != nullptr)
+                    {
+                        rightCurrent = rightCurrent->next;                                            
+                        next->next = nullptr;                        
+                    }
+                }
+                
+                current->next = next;
+                current = current->next;
+            }
+            
+            if(leftCurrent != nullptr)
+                current->next = leftCurrent;
+            else
+                current->next = rightCurrent;
+            
+            ListNode* toDelete = head;
+            head = head->next;
+            delete(toDelete);
+        }
+        return head;
+    }
+    
+    
     ListNode* mergeKLists(vector<ListNode*>& lists) {        
-        return mergeKLists_UsingPriorityQueue(lists);
+        return mergeKListsNLogK(lists);
     }
 };
