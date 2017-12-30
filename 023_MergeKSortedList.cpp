@@ -12,8 +12,22 @@
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
+
+class ListNodeComparator
+{
+public:
+    bool operator()(ListNode* node1, ListNode* node2)
+    {
+        return node1->val > node2->val;
+    }
+};
+
+
 class Solution {
 public:
+    using PriorityQueue = std::priority_queue<ListNode*, vector<ListNode*>, ListNodeComparator>;
+    
+    
     ListNode* merge2Lists(ListNode* list1,ListNode* list2)
     {
         if(list1!= nullptr && list2!= nullptr)
@@ -51,8 +65,8 @@ public:
         return (list1 != nullptr) ? list1 : list2;
     }
     
-    
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
+    ListNode* mergeKLists_UsingO1_Space(vector<ListNode*>& lists) {
+        //O(1) space
         ListNode* result = nullptr;
         if(lists.size() != 0)
         {
@@ -68,5 +82,46 @@ public:
         }
         
         return result;
+    }
+    
+    
+    ListNode* mergeKLists_UsingPriorityQueue(vector<ListNode*>& lists) 
+	{
+		/*
+			O(nlogn) time complexity for total n number of node;
+			O(n) 	space complexity for total n number of node;
+		*/
+		
+        PriorityQueue queue;
+        for(ListNode* list: lists)
+        {
+            while(list!=nullptr)
+            {
+                ListNode* current = list;
+                list = list->next;
+                current->next = nullptr;
+                queue.push(current);
+            }
+        }
+        
+        ListNode* dummyNode = new ListNode(0);
+        ListNode* currentNode = dummyNode;
+        
+        while(!queue.empty())
+        {
+            ListNode* next = queue.top();
+            queue.pop();
+            currentNode->next = next;
+            currentNode = currentNode->next;
+        }
+            
+        ListNode* head = dummyNode->next;
+        delete(dummyNode);
+        return head;
+    }
+    
+    
+    ListNode* mergeKLists(vector<ListNode*>& lists) {        
+        return mergeKLists_UsingPriorityQueue(lists);
     }
 };
