@@ -4,78 +4,73 @@
 	https://leetcode.com/problems/lru-cache/
 */
 
-
-
 class LRUCache {
 public:
-    using LRUCacheList = std::list<std::pair<int,int>>;
-    using LRUCacheIterator = LRUCacheList::iterator;    
-    using LRUCacheMap = std::unordered_map<int,LRUCacheIterator>;
-    using LRUCacheMapIterator = std::unordered_map<int,LRUCacheIterator>::iterator;
+    using KeyValuePair = std::pair<int,int>;
+    using LRUCacheList = std::list<KeyValuePair>;
+    using LRUCacheListIterator = LRUCacheList::iterator;
+    using LRUCacheMap = std::unordered_map<int,LRUCacheListIterator>;
+    using LRUCacheMapIterator = LRUCacheMap::iterator;
     
     
     LRUCache(int capacity) {
-        this->capacity = capacity;
-        this->currentSize = 0;
-        existingKeys.clear();
-        lruCache.clear();
+        maxCapacity = capacity;
+        currentSize = 0;
+        lruCacheList.clear();
+        map.clear();
     }
     
-    int get(int key) {
-        if(!existingKeys.empty())
-        {
-            LRUCacheMapIterator lruMapIterator = existingKeys.find(key);
-            if(lruMapIterator != existingKeys.end())
-            {
-                LRUCacheIterator lruCacheIterator = existingKeys[key];
-                if(lruCacheIterator!= lruCache.begin())
-                {
-                    lruCache.splice(lruCache.begin(), lruCache, lruCacheIterator);
-                    existingKeys[key] = lruCache.begin();
-                }
-                
-                return (*(existingKeys[key])).second;
-            }
-        }
-        return -1;
-    }
-    
-    void put(int key, int value) 
+    int get(int key) 
     {
-        LRUCacheMapIterator lruMapIterator = existingKeys.find(key);
-        if(lruMapIterator != existingKeys.end())
+        int value = -1;
+        if(map.find(key) != map.end())
         {
-            LRUCacheIterator lruCacheIterator = existingKeys[key];
-            if(lruCacheIterator!= lruCache.begin())
-            {
-                lruCache.splice(lruCache.begin(), lruCache, lruCacheIterator);
-                existingKeys[key] = lruCache.begin();
-            }
-            (*(existingKeys[key])).second = value;
+            LRUCacheListIterator iter = map[key];
+            value = (*iter).second;
+            if(iter != lruCacheList.begin())
+                lruCacheList.splice(lruCacheList.begin(),lruCacheList, iter);
+            
+            map[key] = lruCacheList.begin();
+        }
+        return value;
+    }
+    
+    void put(int key, int value) {
+
+        if(map.find(key) != map.end())
+        {
+            LRUCacheListIterator iter = map[key];
+            (*iter).second = value;
+            if(iter != lruCacheList.begin())
+                lruCacheList.splice(lruCacheList.begin(),lruCacheList, iter);            
+        
+            map[key] = lruCacheList.begin();
         }
         else
         {
-            lruCache.push_front(std::make_pair(key,value));
-            existingKeys[key] = lruCache.begin();
+            KeyValuePair pair = std::make_pair(key,value);
+            lruCacheList.push_front(pair);
             currentSize++;
-        }
+            map[key] = lruCacheList.begin();
+        }                
         
-        while(currentSize > capacity)
+        while(currentSize > maxCapacity)
         {
-            LRUCacheIterator lastElement = std::prev(lruCache.end(), 1);
-            int lastElementKey = (*lastElement).first;
-            existingKeys.erase (lastElementKey);
-            lruCache.pop_back();
+            LRUCacheListIterator lastItemIterator = std::prev(lruCacheList.end(), 1);
+            int lastItemKey = (*lastItemIterator).first;
+            map.erase(lastItemKey);
+            lruCacheList.pop_back();
             currentSize--;
         }
-
+        
     }
     
+    
 private:
-    int capacity;
+    int maxCapacity;
     int currentSize;
-    LRUCacheMap existingKeys;
-    LRUCacheList lruCache;
+    LRUCacheList lruCacheList;
+    LRUCacheMap  map;
 };
 
 /**
