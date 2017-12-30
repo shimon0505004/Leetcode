@@ -1,6 +1,7 @@
 /*
-	https://leetcode.com/submissions/detail/129799522/
 	shimon0505004
+	404. Sum of Left Leaves
+	https://leetcode.com/problems/sum-of-left-leaves
 */
 
 

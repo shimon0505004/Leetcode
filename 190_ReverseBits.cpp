@@ -1,6 +1,7 @@
 /*
-	https://leetcode.com/problems/reverse-bits/
 	shimon0505004
+	190. Reverse Bits
+	https://leetcode.com/problems/reverse-bits/
 */
 
 class Solution {
