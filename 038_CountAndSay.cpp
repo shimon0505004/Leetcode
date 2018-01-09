@@ -1,33 +1,68 @@
 /*
-	https://leetcode.com/problems/count-and-say/
 	shimon0505004
+	038. Count and Say
+	https://leetcode.com/problems/count-and-say/
 */
+
+#include<stack>
 
 class Solution {
 public:
-    string countAndSay(int n) {
-        string initialStr = "1";
-        for(int counter=2;counter<=n;counter++)
+    string countAndSay(string inputString)
+    {
+        stack<char> characterStack;
+        stack<int> countStack;
+        
+        for(char c: inputString)
         {
-            int runningNum = initialStr[0]-'0';
-            int count = 1;
-            std::string currentStr;
-            for(int index=1; index<initialStr.length(); index++)
+            if(characterStack.empty())
             {
-                if(runningNum!=initialStr[index]-'0')
+                characterStack.push(c);
+                countStack.push(1);                
+            }
+            else
+            {
+                if(c==characterStack.top())
                 {
-                    currentStr += std::to_string(count);
-                    currentStr += std::to_string(runningNum);
-                    count = 1;
-                    runningNum = initialStr[index]-'0';
+                   int incrementedCountForC = countStack.top() + 1;
+                   countStack.pop();
+                   countStack.push(incrementedCountForC);                    
                 }
                 else
-                    count++;
+                {
+                    characterStack.push(c);
+                    countStack.push(1);                                    
+                }
             }
-            currentStr += std::to_string(count);
-            currentStr += std::to_string(runningNum);
-            initialStr = currentStr;
         }
-        return initialStr;
+
+        string resultString;
+
+        while(!characterStack.empty() && !countStack.empty())
+        {
+            string countToString = std::to_string(countStack.top());
+            countStack.pop();
+            string charString;
+            charString +=  characterStack.top();
+            characterStack.pop();
+
+            resultString = countToString + charString + resultString;
+        }
+        
+        return resultString;
+    }
+    
+
+    
+    string countAndSay(int n) {
+        string result = string("1");
+        if(n==1)
+            return result;
+        
+        for(int count = 2; count <= n; count++)
+        {
+            result = countAndSay(result);
+        }
+        return result;
     }
 };
