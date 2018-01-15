@@ -7,21 +7,23 @@
 class Solution {
 public:
     void moveZeroes(vector<int>& nums) {
-        int firstZeroIndex = -1;
-        int firstNonZeroIndex = -1;
-        for(int index = 0 ; index < nums.size() - 1; index++)
+        int currentFillIndex = 0;
+        int currentIndex = 0;
+        
+        while(currentIndex < nums.size())
         {
-            if(nums[index] == 0)
+            if(nums[currentIndex] != 0)
             {
-                for(int nextIndex = index + 1; nextIndex < nums.size(); nextIndex++)
-                {
-                    if(nums[nextIndex] != 0)
-                    {
-                        std::swap(nums[index], nums[nextIndex]);
-                        break;                        
-                    }
-                }
+                nums[currentFillIndex] = nums[currentIndex];
+                currentFillIndex++;
             }
+            currentIndex++;
+        }
+        
+        while(currentFillIndex < nums.size())
+        {
+            nums[currentFillIndex] = 0;
+            currentFillIndex++;
         }
     }
 };
